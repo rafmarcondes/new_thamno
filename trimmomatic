@@ -35,7 +35,7 @@ BARCODES=$(ls | grep -o [ACTG][ACTG][ACTG][ACTG][ACTG][ACTG] | uniq)
 
 #loop over fastq's using barcode list, running trimmomatic
 for b in $BARCODES
-  do java -jar /home/rmarco3/Trimmomatic-0.39/trimmomatic-0.39.jar PE -trimlog trimmomatic_logs_08dec2020/1.$b -basein *$b.unmapped.1.fastq.gz -baseout trimmed_reads_08dec2020/*$b.unmapped.1.fastq.gz ILLUMINACLIP:TruSeq3-PE.fa:2:30:10
+  do java -jar /home/rmarco3/Trimmomatic-0.39/trimmomatic-0.39.jar PE -trimlog trimmomatic_logs_08dec2020/1.$b -basein *$b.unmapped.1.fastq.gz *$b.unmapped.2.fastq.gz -baseout /work/rmarco3/trimmed_reads_08dec2020/lane1.*$b.fastq.gz ILLUMINACLIP:/home/rmarco3/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10
   done
   
  #illuminaclip arguments per software manual and here: https://speciationgenomics.github.io/Trimmomatic/
