@@ -1,0 +1,41 @@
+ #!/bin/bash
+ #
+ # All PBS instructions must come at the beginning of the script ,before
+ # any executable commands occur. 
+ #
+ # Start by selecting the "single" queue, and providing an allocation code.
+ #
+ #PBS -q single
+ #PBS -A hpc_brumbird14
+ #
+ # To run a serial job, a single node with one process is required.
+ #
+ #PBS -l nodes=1:ppn=1
+ # 
+ # We then indicate how long the job should be allowed to run in terms of
+ # wall-clock time. The job will be killed if it tries to run longer than this.
+ #
+ #PBS -l walltime=72:00:00
+ # 
+ # Tell PBS the name of a file to write standard output to, and that standard
+ # error should be merged into standard output.
+ #
+ #PBS -o /work/rmarco3/trim_test.out
+ #PBS -j oe
+ #
+ # Give the job a name so it can be found readily with qstat.
+ #
+ #PBS -N trim
+ #
+
+module load jdk/1.8.0_161 
+cd /work/rmarco3/seq/walkup/picard/HC2HMDSXX/C1-306_2018-11-19_2018-12-05/1
+
+BARCODES=$(ls | grep -o [ACTG][ACTG][ACTG][ACTG][ACTG][ACTG] | uniq)
+
+#loop over fastq's using barcode list, running trimmomatic
+for b in $BARCODES
+  do java -jar /home/rmarco3/Trimmomatic-0.39/trimmomatic-0.39.jar PE -trimlog trimmomatic_logs_08dec2020/1.$b -basein *$b.unmapped.1.fastq.gz -baseout trimmed_reads_08dec2020/*$b.unmapped.1.fastq.gz ILLUMINACLIP:TruSeq3-PE.fa:2:30:10
+  done
+  
+ #illuminaclip arguments per software manual and here: https://speciationgenomics.github.io/Trimmomatic/
