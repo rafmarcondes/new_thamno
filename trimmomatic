@@ -20,12 +20,12 @@
  # Tell PBS the name of a file to write standard output to, and that standard
  # error should be merged into standard output.
  #
- #PBS -o /work/rmarco3/trim_test.out
+ #PBS -o /work/rmarco3/trim1.out
  #PBS -j oe
  #
  # Give the job a name so it can be found readily with qstat.
  #
- #PBS -N trim
+ #PBS -N trim1
  #
 
 module load jdk/1.8.0_161 
@@ -35,7 +35,7 @@ BARCODES=$(ls | grep -o [ACTG][ACTG][ACTG][ACTG][ACTG][ACTG] | uniq)
 
 #loop over fastq's using barcode list, running trimmomatic
 for b in $BARCODES
-  do java -jar /home/rmarco3/Trimmomatic-0.39/trimmomatic-0.39.jar PE -trimlog trimmomatic_logs_08dec2020/1.$b -basein *$b.unmapped.1.fastq.gz *$b.unmapped.2.fastq.gz -baseout /work/rmarco3/trimmed_reads_08dec2020/lane1.*$b.fastq.gz ILLUMINACLIP:/home/rmarco3/Trimmomatic-0.39/adapters/adapters_from_brant:2:30:10 MINLEN:60
+  do java -jar /home/rmarco3/Trimmomatic-0.39/trimmomatic-0.39.jar PE -trimlog /work/rmarco3/trimmomatic_logs_08dec2020/1.$b -basein *$b.unmapped.1.fastq.gz -baseout /work/rmarco3/trimmed_reads_08dec2020/lane1.$b.fastq.gz ILLUMINACLIP:/home/rmarco3/Trimmomatic-0.39/adapters/adapters_from_brant:2:30:10 MINLEN:60
   done
   
  #illuminaclip arguments per software manual and here: https://speciationgenomics.github.io/Trimmomatic/
