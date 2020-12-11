@@ -1,0 +1,10 @@
+cd /work/rmarco3/trimmed_reads_08dec2020
+module load bwa/0.7.4/INTEL-14.0.2
+module load jdk/1.8.0_161 
+module load samtools/0.1.19/INTEL-14.0.2
+
+BARCODES=$(ls | grep -o lane1.A[ACTG][ACTG][ACTG][ACTG][ACTG] | uniq) #only barcodes starting with A from lane1
+#loop over fastq's using barcode list, running bwa mem
+
+#NOT PARALLEL - NOW NEED TO PARALLELIZE (-t) AND MANAGE FILE NAMES
+bwa mem -M /work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta lane1.ACGGTC_1P.fastq.gz lane1.ACGGTC_2P.fastq.gz | samtools view -b -S - > /work/rmarco3/test.bam
