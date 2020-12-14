@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
  #
  # All PBS instructions must come at the beginning of the script ,before
  # any executable commands occur. 
@@ -20,12 +20,12 @@
  # Tell PBS the name of a file to write standard output to, and that standard
  # error should be merged into standard output.
  #
- #PBS -o /work/rmarco3/map1A.out
+ #PBS -o /work/rmarco3/map1AC.out
  #PBS -j oe
  #
  # Give the job a name so it can be found readily with qstat.
  #
- #PBS -N map1A
+ #PBS -N map1AC
  #
 
 cd /work/rmarco3/trimmed_reads_08dec2020
@@ -33,9 +33,9 @@ module load bwa/0.7.4/INTEL-14.0.2
 module load jdk/1.8.0_161 
 module load samtools/0.1.19/INTEL-14.0.2
 
-BARCODES=$(ls | grep -o lane1.AA[ACTG][ACTG][ACTG][ACTG] | uniq) #only barcodes starting with AA from lane1
+BARCODES=$(ls | grep -o lane1.AC[ACTG][ACTG][ACTG][ACTG] | uniq) #only barcodes starting with AC from lane1
 
 #loop over fastq's using barcode list, running bwa
 for b in $BARCODES
-  do bwa mem -v 0 -M -t 20 /work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta $b'.1Pfastq.gz' $b'.2P.fastq.gz' > /work/rmarco3/sams-14dec2020/$'b.sam'
+  do bwa mem -M -t 20 /work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta $b'_1P.fastq.gz' $b'_2P.fastq.gz' | samtools view -b -S - > /work/rmarco3/bams-14dec2020/$b'.bam'
 done
