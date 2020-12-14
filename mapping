@@ -1,10 +1,40 @@
+ #!/bin/bash
+ #
+ # All PBS instructions must come at the beginning of the script ,before
+ # any executable commands occur. 
+ #
+ # Start by selecting the "single" queue, and providing an allocation code.
+ #
+ #PBS -q workq
+ #PBS -A hpc_brumbird14
+ #
+ # To run a serial job, a single node with one process is required.
+ #
+ #PBS -l nodes=1:ppn=20
+ # 
+ # We then indicate how long the job should be allowed to run in terms of
+ # wall-clock time. The job will be killed if it tries to run longer than this.
+ #
+ #PBS -l walltime=72:00:00
+ # 
+ # Tell PBS the name of a file to write standard output to, and that standard
+ # error should be merged into standard output.
+ #
+ #PBS -o /work/rmarco3/map1A.out
+ #PBS -j oe
+ #
+ # Give the job a name so it can be found readily with qstat.
+ #
+ #PBS -N map1A
+ #
+
 cd /work/rmarco3/trimmed_reads_08dec2020
 module load bwa/0.7.4/INTEL-14.0.2
 module load jdk/1.8.0_161 
 module load samtools/0.1.19/INTEL-14.0.2
 
 BARCODES=$(ls | grep -o lane1.A[ACTG][ACTG][ACTG][ACTG][ACTG] | uniq) #only barcodes starting with A from lane1
-#loop over fastq's using barcode list, running bwa mem
 
-#NOT PARALLEL - NOW NEED TO PARALLELIZE (-t) AND MANAGE FILE NAMES
-bwa mem -M /work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta lane1.ACGGTC_1P.fastq.gz lane1.ACGGTC_2P.fastq.gz | samtools view -b -S - > /work/rmarco3/test.bam
+#loop over fastq's using barcode list, running bwa
+for b in $BARCODES
+  bwa mem -M -t 20 /work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta $b.1Pfastq.gz $b.2P.fastq.gz | samtools view -b -S - > /work/rmarco3/bams-14dec2020/$b.bam
