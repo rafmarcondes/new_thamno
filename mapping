@@ -33,8 +33,9 @@ module load bwa/0.7.4/INTEL-14.0.2
 module load jdk/1.8.0_161 
 module load samtools/0.1.19/INTEL-14.0.2
 
-BARCODES=$(ls | grep -o lane1.A[ACTG][ACTG][ACTG][ACTG][ACTG] | uniq) #only barcodes starting with A from lane1
+BARCODES=$(ls | grep -o lane1.AA[ACTG][ACTG][ACTG][ACTG] | uniq) #only barcodes starting with AA from lane1
 
 #loop over fastq's using barcode list, running bwa
 for b in $BARCODES
-  bwa mem -M -t 20 /work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta $b.1Pfastq.gz $b.2P.fastq.gz | samtools view -b -S - > /work/rmarco3/bams-14dec2020/$b.bam
+  do bwa mem -v 0 -M -t 20 /work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta $b.1Pfastq.gz $b.2P.fastq.gz > /work/rmarco3/sams-14dec2020/$b.sam
+done
