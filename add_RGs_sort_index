@@ -5,7 +5,7 @@
  #
  # Start by selecting the "single" queue, and providing an allocation code.
  #
- #PBS -q workq
+ #PBS -q single
  #PBS -A hpc_brumbird14
  #
  # To run a serial job, a single node with one process is required.
@@ -20,19 +20,18 @@
  # Tell PBS the name of a file to write standard output to, and that standard
  # error should be merged into standard output.
  #
- #PBS -o /work/rmarco3/sort0.out
+ #PBS -o /work/rmarco3/sort9.out
  #PBS -j oe
  #
  # Give the job a name so it can be found readily with qstat.
  #
- #PBS -N msort0
+ #PBS -N sort9
  #
-
 
 cd /work/rmarco3/bams-14dec2020
 module load jdk/1.8.0_161
 
-for f in *0.bam
-	do java -jar /home/rmarco3/picard/build/libs/picard.jar AddOrReplaceReadGroups I=$f O=/n/holyscratch01/edwards_lab/rafa/bams_withRGs_25aug2020/$f RGID=0 RGLB=0 RGPL=illumina RGSM=$f | \
-  java -jar /home/rmarco3/picard/build/libs/picard.jar SortSam I=I=/dev/stdin O=/work/rmarco3/RGs_sorted_indexed_bams SORT_ORDER=coordinate CREATE_INDEX=true
+for f in *9.bam
+	do java -jar /home/rmarco3/picard/build/libs/picard.jar AddOrReplaceReadGroups I=$f O=/dev/stdout RGPU=0 RGID=0 RGLB=0 RGPL=illumina RGSM=$f | \
+  java -jar /home/rmarco3/picard/build/libs/picard.jar SortSam I=/dev/stdin O=/work/rmarco3/RGs_sorted_indexed_bams/$f SORT_ORDER=coordinate CREATE_INDEX=true
 	done 
