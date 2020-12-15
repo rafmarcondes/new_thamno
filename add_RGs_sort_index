@@ -1,0 +1,38 @@
+#!/bin/bash
+ #
+ # All PBS instructions must come at the beginning of the script ,before
+ # any executable commands occur. 
+ #
+ # Start by selecting the "single" queue, and providing an allocation code.
+ #
+ #PBS -q workq
+ #PBS -A hpc_brumbird14
+ #
+ # To run a serial job, a single node with one process is required.
+ #
+ #PBS -l nodes=1:ppn=1
+ # 
+ # We then indicate how long the job should be allowed to run in terms of
+ # wall-clock time. The job will be killed if it tries to run longer than this.
+ #
+ #PBS -l walltime=72:00:00
+ # 
+ # Tell PBS the name of a file to write standard output to, and that standard
+ # error should be merged into standard output.
+ #
+ #PBS -o /work/rmarco3/sort0.out
+ #PBS -j oe
+ #
+ # Give the job a name so it can be found readily with qstat.
+ #
+ #PBS -N msort0
+ #
+
+
+cd /work/rmarco3/bams-14dec2020
+module load jdk/1.8.0_161
+
+for f in *0.bam
+	do java -jar /home/rmarco3/picard/build/libs/picard.jar AddOrReplaceReadGroups I=$f O=/n/holyscratch01/edwards_lab/rafa/bams_withRGs_25aug2020/$f RGID=0 RGLB=0 RGPL=illumina RGSM=$f | \
+  java -jar /home/rmarco3/picard/build/libs/picard.jar SortSam I=I=/dev/stdin O=/work/rmarco3/RGs_sorted_indexed_bams SORT_ORDER=coordinate CREATE_INDEX=true
+	done 
