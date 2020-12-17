@@ -1,0 +1,37 @@
+
+ #!/bin/bash
+ #
+ # All PBS instructions must come at the beginning of the script ,before
+ # any executable commands occur. 
+ #
+ # Start by selecting the "single" queue, and providing an allocation code.
+ #
+ #PBS -q workq
+ #PBS -A hpc_brumbird14
+ #
+ # To run a serial job, a single node with one process is required.
+ #
+ #PBS -l nodes=1:ppn=20
+ # 
+ # We then indicate how long the job should be allowed to run in terms of
+ # wall-clock time. The job will be killed if it tries to run longer than this.
+ #
+ #PBS -l walltime=48:00:00
+ # 
+ # Tell PBS the name of a file to write standard output to, and that standard
+ # error should be merged into standard output.
+ #
+ #PBS -o /work/rmarco3/dedup.out
+ #PBS -j oe
+ #
+ # Give the job a name so it can be found readily with qstat.
+ #
+ #PBS -N dedup
+ #
+
+module load jdk/1.8.0_161  
+cd /work/rmarco3/RGs_sorted_indexed_bams
+
+for f in *.bam
+	do java -Xmx32g -jar /home/rmarco3/picard/build/libs/picard.jar MarkDuplicates I=$f O=/work/rmarco3/deduped_bams/$f METRICS_FILE=/work/rmarco3/dedup_metrics/$f REMOVE_DUPLICATES=false TAGGING_POLICY=All
+done
