@@ -1,0 +1,28 @@
+#!/bin/bash
+#PBS -A hpc_brumbird14
+#PBS -l nodes=1:ppn=20
+#PBS -l walltime=72:00:00
+#PBS -q checkpt
+#PBS -N GenomicsDBImport
+
+# activate gatk
+source activate gatk
+
+# move into the directory containing this script
+cd $PBS_O_WORKDIR
+
+# we need a tmp dir that is large for the program to use
+mkdir -p $PBS_O_WORKDIR/tmp
+
+module load jdk/1.8.0_161
+
+# set batch size equal to cores on node also set max RAM a
+# little low, because there is additional overhead
+# involved per GATK website
+/worka/work/rmarco3/gatk-4.1.9.0/gatk --java-options "-Xmx58g" \
+    GenomicsDBImport \
+    --genomicsdb-workspace-path my_database \
+    --tmp-dir $PBS_O_WORKDIR/tmp \
+    --batch-size 20 \
+    --sample-name-map gvcfs-for-db-import.sample_map \
+    -L /work/rmarco3/ch-list.list
