@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# name of output folder
+OUTPUT=temp-gvcf
+
+## DO NOT EDIT BELOW THIS LINE - this comes as input from GNU parallel on STDIN ##
+module load jdk/1.8.0_161
+source activate gatk
+
+REFERENCE=$1
+INPUT=$2
+FILENAME=$(basename -- "$INPUT")
+FILENAME_PART="${FILENAME%.*}"
+OUT1=$OUTPUT/$FILENAME.g.vcf.gz
+
+# ensure that the output directory exists
+mkdir -p $OUTPUT
+# NOTE - we're assuming single-threaded operation for each BAM file, so we set RAM to 4GB each (16 cores, max)
+gatk --java-options "-Xmx4G" HaplotypeCaller -R $REFERENCE -I $INPUT -O $OUT1 -ERC GVCF
