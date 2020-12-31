@@ -21,7 +21,7 @@ module load jdk/1.8.0_161
 # involved per GATK website
 /worka/work/rmarco3/gatk-4.1.9.0/gatk --java-options "-Xmx580g" \
     GenomicsDBImport \
-    --max-num-intervals-to-import-in-parallel \
+    --max-num-intervals-to-import-in-parallel 10\
     --genomicsdb-workspace-path my_database \
     --tmp-dir $PBS_O_WORKDIR/tmp \
     --batch-size 20 \
