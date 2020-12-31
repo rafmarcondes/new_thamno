@@ -24,6 +24,6 @@ module load jdk/1.8.0_161
     --max-num-intervals-to-import-in-parallel \
     --genomicsdb-workspace-path my_database \
     --tmp-dir $PBS_O_WORKDIR/tmp \
-    --batch-size 5 \
+    --batch-size 20 \
     --sample-name-map gvcfs-for-db-import.sample_map \
     -L /work/rmarco3/ch-list.list
