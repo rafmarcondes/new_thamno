@@ -1,9 +1,11 @@
+###genome divided into 11 intervals; repeat this for each (argument -L)###
+
 #!/bin/bash
-#PBS -A hpc_brumbird14
-#PBS -l nodes=10:ppn=20
+#PBS -A hpc_brumbird15
+#PBS -l nodes=1:ppn=20
 #PBS -l walltime=72:00:00
 #PBS -q checkpt
-#PBS -N GenomicsDBImport
+#PBS -N Gendb1
 
 # activate gatk
 source activate gatk
@@ -12,18 +14,18 @@ source activate gatk
 cd $PBS_O_WORKDIR
 
 # we need a tmp dir that is large for the program to use
-mkdir -p $PBS_O_WORKDIR/tmp
+mkdir -p $PBS_O_WORKDIR/tmp1
 
 module load jdk/1.8.0_161
 
 # set batch size equal to cores on node also set max RAM a
 # little low, because there is additional overhead
 # involved per GATK website
-/worka/work/rmarco3/gatk-4.1.9.0/gatk --java-options "-Xmx580g" \
+/worka/work/rmarco3/gatk-4.1.9.0/gatk --java-options "-Xmx50g" \
     GenomicsDBImport \
     --max-num-intervals-to-import-in-parallel 10\
-    --genomicsdb-workspace-path my_database \
-    --tmp-dir $PBS_O_WORKDIR/tmp \
+    --genomicsdb-workspace-path my_database1 \
+    --tmp-dir $PBS_O_WORKDIR/tmp1 \
     --batch-size 20 \
     --sample-name-map gvcfs-for-db-import.sample_map \
-    -L /work/rmarco3/ch-list.list
+    -L /work/rmarco3/list1.list
