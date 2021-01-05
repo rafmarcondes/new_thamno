@@ -1,0 +1,25 @@
+## this repeated for each genomic interval###
+
+#!/bin/bash
+#PBS -A hpc_brumbirds15
+#PBS -l nodes=1:ppn=20
+#PBS -l walltime=72:00:00
+#PBS -q checkpt
+#PBS -N GenotypeGVCFs1
+
+# activate gatk
+source activate gatk
+
+cd /work/rmarco3
+
+# set reference
+REFERENCE=$/work/rmarco3/pseudo_assembly/Tcae_B94639.pseudo.upper.masked.fasta 
+
+# now go ahead and run and set batch size equal to cores on node
+# also set max RAM a little low, because there is additional overhead
+# involved
+gatk --java-options "-Xmx58g" \
+    GenotypeGVCFs \
+    -R $REFERENCE \
+    -V gendb://my_database1 \
+    -O temp_int_1.vcf.gz
