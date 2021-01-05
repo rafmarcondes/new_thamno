@@ -10,6 +10,8 @@
 # activate gatk
 source activate gatk
 
+module load jdk/1.8.0_161
+
 cd /work/rmarco3
 
 # set reference
