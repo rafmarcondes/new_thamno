@@ -1,0 +1,11 @@
+#!/bin/bash
+#PBS -A hpc_brumbird15
+#PBS -l nodes=1:ppn=20
+#PBS -l walltime=72:00:00
+#PBS -q checkpt
+#PBS -N gathervcfs
+
+cd /work/rmarco3
+
+bcftools concat -f vcflist -a -Ou | \
+bcftools sort - -o total_vcf_pre_vqsr.sh -O z
