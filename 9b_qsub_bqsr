@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -A hpc_brumbird15
+#PBS -l nodes=6:ppn=20
+#PBS -l walltime=72:00:00
+#PBS -q checkpt
+#PBS -N multi_bqsr
+
+# DONT EDIT BELOW #
+
+# set the number of jobs per node
+# based on 4 GB RAM per job
+export JOBS_PER_NODE=16
+
+# load GNU parallel
+module load gnuparallel/20170122
+
+# move into the directory containing this script
+cd $PBS_O_WORKDIR
+
+parallel --colsep '\,' \
+        --progress \
+        --joblog logfile.bqsr.$PBS_JOBID \
+        -j $JOBS_PER_NODE \
+        --slf $PBS_NODEFILE \
+        --workdir $PBS_O_WORKDIR \
+        -a bams-to-recalibrate.txt \
+        ./bam-bqsr-sub.sh {$1} {$2} {$3}
