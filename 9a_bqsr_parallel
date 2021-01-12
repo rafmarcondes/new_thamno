@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# name of output folder
+OUTPUT=bqsr-alignments
+
+## DO NOT EDIT BELOW THIS LINE - this comes as input from GNU parallel on STDIN ##
+module load jdk/1.8.0_161
+source activate gatk
+
+REFERENCE=$1
+SITES=$2
+INPUT=$3
+FILENAME=$(basename -- "$INPUT")
+FILENAME_PART="${FILENAME%.*}"
+OUT1=$OUTPUT/$FILENAME.recal_data.table
+OUT2=$OUTPUT/$FILENAME.bqsr.bam
+
+# ensure that the output directory exists
+mkdir -p $OUTPUT
+# NOTE - we're assuming single-threaded operation for each BAM file,
+# so we set RAM to 4GB each (16 cores, max)
+/work/rmarco3/gatk-4.1.9.0/gatk --java-options "-Xmx4G" BaseRecalibrator \
+    -I $INPUT \
+    -R $REFERENCE \
+    --known-sites $SITES \
+    -O $OUT1 \
+&& /work/rmarco3/gatk-4.1.9.0/gatk --java-options "-Xmx4G" ApplyBQSR \
+    -R $REFERENCE \
+    -I $INPUT \
+    --bqsr-recal-file $OUT1 \
+    -O $OUT2
