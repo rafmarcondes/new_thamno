@@ -1,0 +1,52 @@
+#PBS -q single
+ #PBS -A hpc_brumbird15
+ #
+ # To run a serial job, a single node with one process is required.
+ #
+ #PBS -l nodes=1:ppn=1
+ # 
+ # We then indicate how long the job should be allowed to run in terms of
+ # wall-clock time. The job will be killed if it tries to run longer than this.
+ #
+ #PBS -l walltime=48:00:00
+ # 
+ # Tell PBS the name of a file to write standard output to, and that standard
+ # error should be merged into standard output.
+ #
+ #PBS -o /scratch/rmarco3/filter
+ #PBS -j oe
+ #
+ # Give the job a name so it can be found readily with qstat.
+ #
+ #PBS -N filter
+ #
+
+cd /work/rmarco3/
+
+export BCFTOOLS_PLUGINS=/home/rmarco3/bcftools-1.11/plugins
+
+module purge
+module load vcftools/0.1.14/INTEL-18.0.0
+
+vcftools --gzvcf /work/rmarco3/raw_unfiltered_26jan2020.vcf.gz --max-missing 0.5 --mac 3 --minQ 30 --minDP 5 --recode --recode-INFO-all --out temp
+
+##create a list of % of missing data per individual
+vcftools --vcf temp.recode.vcf --missing-indv
+
+##create list of indivs with >50% missing data
+awk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
+
+##exclude the above indivs
+vcftools --vcf temp.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out temp2
+
+## Now that we have removed poor coverage individuals, we can re-filter to restrict the data
+## to variants called in 95%  of individuals and filter by mean depth of genotypes >10
+vcftools --vcf temp2.recode.vcf  --max-missing 0.95  --maf 0.05  --recode  --recode-INFO-all --out temp3 --min-meanDP 10
+
+vcftools --vcf temp3.recode.vcf --hardy #get HWE info
+
+awk '{ if ($8 < 0.05) print $1,$2 }' out.hwe > excess_het #select loci with excess heterozygotes (p<0.05)
+
+vctools --vcf temp3.vcf --exclude-positions excess_het --recode --recode-INFO-all --out filtered_for_fst_27jan2020  #exclude the above loci
+
+/home/rmarco3/bin/bcftools plugin prune -m 0.5 -w 50 filtered_for_fst_27jan2020.recode.vcf -o filtered_for_pca_27jan2020.vcf #prune by LD by R^2>0.5 in windows of 50 loci
