@@ -1,0 +1,6 @@
+library(SNPRelate)
+setwd('/work/rmarco3')
+vars=openfn.gds(snpgdsVCF2GDS(vcf.fn='filtered_for_pca_27jan2020.vcf',out.fn='filtered_for_pca_27jan2020.gds'))
+#this will use only bi-allelic variants
+pc=snpgdsPCA(gdsobj=vars,algorithm='randomized')
+saveRDS(object=pc,file='pca_rez_28jan2020.rds')
